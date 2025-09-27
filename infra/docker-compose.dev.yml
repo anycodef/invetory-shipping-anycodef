@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  inventory-service:
+    build: ./inventory-service
+    container_name: inventory-service
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - DATABASE_URL=postgresql://user:password@inventory-db:5432/inventory
+    depends_on:
+      - inventory-db
+
+  inventory-db:
+    image: postgres:14
+    container_name: inventory-db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: inventory
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_inventory:/var/lib/postgresql/data
+
+volumes:
+  pgdata_inventory:

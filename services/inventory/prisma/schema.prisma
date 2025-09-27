@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ProductoAlmacen{
+  id                   Int @id @default(autoincrement()) 
+  id_producto          Int //FK
+  id_almacen           Int //FK
+  stock_reservado      Int @default(0)
+  stock_disponible     Int @default(0)
+
+  //producto             Producto @relation(fields: [id_producto], references: [id]) 
+  //almacen              Almacen @relation(fields: [id_almacen], references: [id]) 
+  movimiento Movimiento[]
+
+  @@map("producto_almacen")
+}
+
+model TipoMovimiento{
+  id                   Int @id @default(autoincrement()) 
+  nombre               String @unique
+  descripcion          String?
+
+  movimiento Movimiento[]
+
+  @@map("tipo_movimiento")
+}
+
+model Movimiento{
+  id                   Int @id @default(autoincrement()) 
+  id_producto_almacen  Int //FK
+  id_tipo              Int //FK
+  cantidad             Int
+  fecha                DateTime @default(now())
+
+  producto_almacen     ProductoAlmacen @relation(fields: [id_producto_almacen], references: [id]) 
+  tipo_movimiento      TipoMovimiento @relation(fields: [id_tipo], references: [id])
+
+  @@map("movimiento")
+}

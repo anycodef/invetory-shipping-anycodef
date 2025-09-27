@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reserva {
+  id                      Int   @id @default(autoincrement())
+  id_producto_almacen     Int //FK
+  cantidad                Int
+  fecha_reserva           DateTime 
+  fecha_expiracion        DateTime
+  id_estado               Int //FK
+
+  estado                  EstadoReserva @relation(fields: [id_estado], references: [id])  
+  //producto_almacen        ProductoAlmacen @relation(fields: [id_producto], references: [id]) 
+  
+  @@map("reserva")
+}
+
+model EstadoReserva {
+  id                   Int @id @default(autoincrement()) 
+  nombre               String @unique
+  descripcion          String?
+  
+  reserva              Reserva[]
+ 
+  @@map("estado_reserva")
+}
