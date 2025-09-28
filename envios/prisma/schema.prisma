@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para los transportistas (carriers).
+model Carrier {
+  id              Int     @id @default(autoincrement())
+  nombre          String  @db.VarChar(1000)
+  tarifa_por_hora Float   // Prisma's Float maps to PostgreSQL's DOUBLE PRECISION
+  envios          Envio[] // Many-to-many relation
+}
+
+// Modelo para el estado de un envío (e.g., "En preparación", "Enviado", "Entregado").
+model EstadoEnvio {
+  id     Int     @id @default(autoincrement())
+  nombre String  @db.VarChar(1000)
+  envios Envio[]
+}
+
+// Modelo para gestionar la información de los envíos.
+// Nota: La estructura de esta tabla es similar a la de 'Reserva' según la solicitud.
+model Envio {
+  id                Int         @id @default(autoincrement())
+  id_stock_producto Int         // Foreign key from an external Stock API
+  id_orden          Int         // Foreign key from an external Order API
+  stock_reservado   Int
+  fecha_reserva     DateTime
+  fecha_expiracion  DateTime
+  id_estado         Int
+  estado            EstadoEnvio @relation(fields: [id_estado], references: [id])
+  carriers          Carrier[]   // Many-to-many relation
+}

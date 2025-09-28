@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para el stock de un producto en un local específico.
+model StockProducto {
+  id               Int          @id @default(autoincrement())
+  id_producto      Int          // Foreign key from an external Product API
+  id_local         Int          // Foreign key from an external Warehouse API
+  stock_disponible Int
+  stock_reservado  Int
+  movimientos      Movimiento[]
+}
+
+// Modelo para los tipos de movimiento de inventario (e.g., Compra, Venta, Ajuste).
+model TipoMovimiento {
+  id          Int          @id @default(autoincrement())
+  nombre      String       @db.VarChar(100)
+  descripcion String?      @db.Text
+  movimientos Movimiento[]
+}
+
+// Modelo para registrar cada movimiento de inventario.
+model Movimiento {
+  id                Int            @id @default(autoincrement())
+  lote              Int
+  fecha_hora        DateTime       @default(now())
+  id_stock_producto Int
+  stock_producto    StockProducto  @relation(fields: [id_stock_producto], references: [id])
+  id_tipo           Int
+  tipo              TipoMovimiento @relation(fields: [id_tipo], references: [id])
+}

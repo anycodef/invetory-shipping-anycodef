@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para Departamentos del país.
+model Departamento {
+  id         Int         @id @default(autoincrement())
+  nombre     String      @db.VarChar(50)
+  provincias Provincia[]
+}
+
+// Modelo para Provincias de un departamento.
+model Provincia {
+  id              Int          @id @default(autoincrement())
+  nombre          String       @db.VarChar(50)
+  id_departamento Int
+  departamento    Departamento @relation(fields: [id_departamento], references: [id])
+  distritos       Distrito[]
+}
+
+// Modelo para Distritos de una provincia.
+model Distrito {
+  id           Int         @id @default(autoincrement())
+  nombre       String      @db.VarChar(50)
+  id_provincia Int
+  provincia    Provincia   @relation(fields: [id_provincia], references: [id])
+  direcciones  Direccion[]
+}
+
+// Modelo para coordenadas geográficas (latitud, longitud).
+model Geopoint {
+  id        Int       @id @default(autoincrement())
+  latitud   Decimal
+  longitud  Decimal
+  direccion Direccion? // Relación opcional uno a uno
+}
+
+// Modelo para las direcciones físicas.
+model Direccion {
+  id           Int      @id @default(autoincrement())
+  referencia   String   @db.Text
+  id_distrito  Int
+  distrito     Distrito @relation(fields: [id_distrito], references: [id])
+  id_geopoint  Int      @unique // Un Geopoint por Dirección
+  geopoint     Geopoint @relation(fields: [id_geopoint], references: [id])
+  local        Local?   // Relación opcional uno a uno
+}
+
+// Modelo para los tipos de locales (e.g., Almacén, Tienda).
+model TipoLocal {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @db.VarChar(15)
+  descripcion String? @db.Text
+  locales     Local[]
+}
+
+// Modelo para los locales físicos (tiendas, almacenes).
+model Local {
+  id            Int       @id @default(autoincrement())
+  nombre        String    @db.VarChar(30)
+  imagen        String?   // URL de la imagen del local
+  id_direccion  Int       @unique // Una Dirección por Local
+  direccion     Direccion @relation(fields: [id_direccion], references: [id])
+  id_tipo_local Int
+  tipoLocal     TipoLocal @relation(fields: [id_tipo_local], references: [id])
+}

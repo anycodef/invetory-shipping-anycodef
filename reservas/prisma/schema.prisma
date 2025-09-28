@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para el estado de una reserva.
+model EstadoReserva {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @db.VarChar(1000)
+  descripcion String?  @db.Text
+  reservas    Reserva[]
+}
+
+// Modelo para gestionar las reservas de stock de productos.
+model Reserva {
+  id                Int           @id @default(autoincrement())
+  id_stock_producto Int           // Foreign key from an external API
+  id_orden          Int           // Foreign key from an external API
+  stock_reservado   Int
+  fecha_reserva     DateTime      @default(now())
+  fecha_expiracion  DateTime
+  id_estado         Int
+  estado            EstadoReserva @relation(fields: [id_estado], references: [id])
+}
