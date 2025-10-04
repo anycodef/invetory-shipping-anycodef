@@ -57,18 +57,23 @@ model Direccion {
 // Modelo para los tipos de locales (e.g., Almacén, Tienda).
 model TipoLocal {
   id          Int     @id @default(autoincrement())
-  nombre      String  @db.VarChar(15)
+  nombre      String  @unique @db.VarChar(15)
   descripcion String? @db.Text
   locales     Local[]
 }
 
 // Modelo para los locales físicos (tiendas, almacenes).
 model Local {
-  id            Int       @id @default(autoincrement())
-  nombre        String    @db.VarChar(30)
-  imagen        String?   // URL de la imagen del local
-  id_direccion  Int       @unique // Una Dirección por Local
-  direccion     Direccion @relation(fields: [id_direccion], references: [id])
-  id_tipo_local Int
-  tipoLocal     TipoLocal @relation(fields: [id_tipo_local], references: [id])
+  id                   Int       @id @default(autoincrement())
+  nombre               String    @db.VarChar(30)
+  imagen               String? // URL de la imagen del local
+  estado               String    @default("INACTIVO") @db.VarChar(10)
+  id_direccion         Int       @unique // Una Dirección por Local
+  direccion            Direccion @relation(fields: [id_direccion], references: [id])
+  id_tipo_local        Int
+  tipoLocal            TipoLocal @relation(fields: [id_tipo_local], references: [id])
+  // Relación para asociar una tienda a un almacén
+  almacenId            Int?
+  almacen              Local?    @relation("AlmacenTiendas", fields: [almacenId], references: [id])
+  tiendasAsociadas     Local[]   @relation("AlmacenTiendas")
 }
