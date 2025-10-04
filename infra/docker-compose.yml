@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  almacen-service:
+    build:
+      context: ../almacen
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - PORT=3002
+    depends_on:
+      - postgres-db
+    networks:
+      - mi_red
+
+  postgres-db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mi_red
+
+networks:
+  mi_red:
+    driver: bridge
+
+volumes:
+  postgres_data:
