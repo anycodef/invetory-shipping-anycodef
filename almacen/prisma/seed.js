@@ -45,7 +45,7 @@ const seleccionarElementoAleatorio = (array) => array[Math.floor(Math.random() *
  * Lee y procesa el archivo CSV para poblar la base de datos con datos geográficos.
  */
 async function seedGeographicalData() {
-  const csvFilePath = path.join(__dirname, '../../data/Data_Muestra_ubigeos.csv');
+  const csvFilePath = path.join('/app/data', 'Data_Muestra_ubigeos.csv');
   const geographicalData = [];
 
   await new Promise((resolve, reject) => {

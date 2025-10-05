@@ -12,6 +12,8 @@ services:
       - PORT=3002
     depends_on:
       - postgres-db
+    volumes:
+      - ../data:/app/data
     networks:
       - mi_red
 
