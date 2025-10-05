@@ -13,7 +13,7 @@ datasource db {
 // Modelo para Departamentos del país.
 model Departamento {
   id         Int         @id @default(autoincrement())
-  nombre     String      @db.VarChar(50)
+  nombre     String      @unique @db.VarChar(50)
   provincias Provincia[]
 }
 
