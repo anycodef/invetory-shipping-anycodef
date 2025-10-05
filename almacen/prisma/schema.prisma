@@ -24,6 +24,8 @@ model Provincia {
   id_departamento Int
   departamento    Departamento @relation(fields: [id_departamento], references: [id])
   distritos       Distrito[]
+
+  @@unique([nombre, id_departamento])
 }
 
 // Modelo para Distritos de una provincia.
@@ -33,6 +35,8 @@ model Distrito {
   id_provincia Int
   provincia    Provincia   @relation(fields: [id_provincia], references: [id])
   direcciones  Direccion[]
+
+  @@unique([nombre, id_provincia])
 }
 
 // Modelo para coordenadas geográficas (latitud, longitud).
